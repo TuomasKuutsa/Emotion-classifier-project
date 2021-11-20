@@ -1,0 +1,5 @@
+env
+models
+.ipynb_checkpoints
+speech-emotion-recognition-ravdess-data
+__pycache__
