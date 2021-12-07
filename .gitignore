@@ -3,3 +3,7 @@ models
 .ipynb_checkpoints
 speech-emotion-recognition-ravdess-data
 __pycache__
+tempresults
+tempsearches
+temp
+keras
