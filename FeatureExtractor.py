@@ -55,26 +55,22 @@ def augmentation (audio, sr, n_masks, n_mels):
     
     for _ in range(n_masks):
         
-        copy = audio.copy()
+        # copy = copy + np.random.uniform(-0.002, 0.002, size=len(copy))
         
-        copy = copy + np.random.uniform(-0.002, 0.002, size=len(copy))
+        audio = lr.effects.pitch_shift(audio, sr, n_steps=np.random.randint(-2, 3), bins_per_octave=24)
         
-        copy = lr.effects.pitch_shift(copy, sr, n_steps=np.random.randint(-12, 13), bins_per_octave=24)
+        mel = lr.power_to_db(lrf.melspectrogram(audio, sr=sr, n_fft=512, n_mels=n_mels, fmax=8000))
         
-        copy = lr.power_to_db(lrf.melspectrogram(audio, sr=sr, n_fft=512, n_mels=n_mels, fmax=8000))
+        mel = masker(mel, n_mels)
         
-        copy = masker(copy, n_mels)
-        
-        copy_list.append(copy)
+        copy_list.append(mel)
         
     return copy_list
 
 def masker(mel, n_mels):
-        
-    copy = mel.copy()
 
-    f_mask_start1 = np.random.randint(2, n_mels/6)
-    f_mask_end1 =  f_mask_start1 + np.random.randint(3, 5)
+    f_mask_start1 = np.random.randint(0, n_mels/6)
+    f_mask_end1 =  f_mask_start1 + np.random.randint(4, 8)
 
     f_mask_start2 = np.random.randint(n_mels/6, n_mels/2)
     f_mask_end2 =  f_mask_start2 + np.random.randint(4, 8)
@@ -82,11 +78,11 @@ def masker(mel, n_mels):
     t_mask_start = np.random.randint(15, 50)
     t_mask_end = t_mask_start + np.random.randint(3, 5)
 
-    copy[f_mask_start1:f_mask_end1] = np.random.randint(-90, -50)
-    copy[f_mask_start2:f_mask_end2] = np.random.randint(-90, -50)
-    copy[:,t_mask_start:t_mask_end] = np.random.randint(-90, -50)
+    mel[f_mask_start1:f_mask_end1] = np.random.randint(-90, -50)
+    mel[f_mask_start2:f_mask_end2] = np.random.randint(-90, -50)
+    mel[:,t_mask_start:t_mask_end] = np.random.randint(-90, -50)
         
-    return copy
+    return mel
 
 def take_means(log_mels, mfccs):
 
