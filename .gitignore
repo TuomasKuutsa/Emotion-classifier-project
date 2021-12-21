@@ -1,8 +1,11 @@
 env
 .ipynb_checkpoints
+.vscode
 speech-emotion-recognition-ravdess-data
 __pycache__
 tempresults
 tempsearches
 temp
-keras
+tb_logs
+search
+test.py
