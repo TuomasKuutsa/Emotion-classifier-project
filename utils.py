@@ -195,7 +195,7 @@ def sklearn_cv(clf_list, train_paths, n_folds, n_augmentations):
 
     """
     Cross-valdiation implementation for sklearn estimators.
-    If augmentation is used then only the training fold is augmented. Prediction and scoring is done using valdiation fold.
+    If augmentation is used then only the training fold only and predicts and scores using valdiation fold.
 
     clf_list:           list of Sklearn objects that implement estimator api i.e classifiers, pipelines, searches etc.
     train_paths:        paths to raw data
@@ -227,7 +227,7 @@ def sklearn_cv(clf_list, train_paths, n_folds, n_augmentations):
 def get_folds(train_paths, n_augmentations, n_folds, for_sklearn=True):
 
     """
-    Function processes raw data from train_paths for each fold.
+    Function creates cross-validation folds from train_paths.
 
     returns list of length n_folds with elements of shape (fold number, (X_train, y_train), (X_val, y_val))
 
