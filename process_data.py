@@ -5,8 +5,25 @@ from os import getpid
 
 from multiprocessing import Pool
 
+from sklearn.model_selection import train_test_split
+import glob
 
-def process(path, for_sklearn, n_augmentations, n_mels, full_mels, n_mfccs, fmax):
+
+def extract(path, for_sklearn, n_augmentations, n_mels, full_mels, n_mfccs, fmax):
+
+    """
+    Function extracts features, performs possible augmentation and a reshape to a wanted format specified by for_sklearn parameter
+
+    path:               path to audio.
+    for_sklearn:        Boolean.
+    n_augmentations:    number of augmented samples.
+    n_mels:             number of mel-bands
+    full_mels:          Boolean, if True returns spectrogram if False returns row-wise mean and std vector.
+    n_mfccs:            Number of mfc coefficents
+    fmax:               Max frequency of mel spectrograms
+    
+    """
+
     
     print(f'processing with id: {getpid()} file: {path}')
     
@@ -32,7 +49,7 @@ def process(path, for_sklearn, n_augmentations, n_mels, full_mels, n_mfccs, fmax
 
     if for_sklearn:
         
-        sample = flatten(mels, mfccs)
+        sample = means_and_stds(mels, mfccs)
         sample = [np.append(s, gender) for s in sample]
         sample = [np.append(s, intensity) for s in sample]
         sample = [np.append(s, statement) for s in sample]
@@ -41,14 +58,19 @@ def process(path, for_sklearn, n_augmentations, n_mels, full_mels, n_mfccs, fmax
     
     else:
 
-        mels, mfccs = reshape(mels, mfccs, full_mels)
+        mels, mfccs = mean_and_reshape(mels, mfccs, full_mels)
         meta = [np.asarray([gender, intensity, statement], dtype=np.float32) for _ in range(n_augmentations+1)]       
 
         return mfccs, mels, meta, target_list
 
 
    
-def augmentation (audio, sr, n_augmentations, n_mels, fmax):
+def augmentation(audio, sr, n_augmentations, n_mels, fmax):
+
+    """
+    Function applies data augmentation for audio samples.
+    
+    """
     
     copy_list = []
     
@@ -56,9 +78,8 @@ def augmentation (audio, sr, n_augmentations, n_mels, fmax):
 
         copy = audio.copy()
         
+        # Apply gaussian noise to audio
         copy = copy + np.random.normal(0, 0.0001, size=len(audio))
-        
-        # pitch_shift = lr.effects.pitch_shift(copy, sr, n_steps=np.random.randint(-2, 3), bins_per_octave=24)
         
         mel = lr.power_to_db(lrf.melspectrogram(copy, sr=sr, n_fft=512, n_mels=n_mels, fmax=fmax))
         
@@ -69,6 +90,11 @@ def augmentation (audio, sr, n_augmentations, n_mels, fmax):
     return copy_list
 
 def masker(mel, n_mels):
+
+    """
+    Applies randomized frequency and time domain masking for mel-spectrograms
+    
+    """
 
     f_mask_start1 = np.random.randint(0, n_mels/8)
     f_mask_end1 =  f_mask_start1 + np.random.randint(3, 5)
@@ -85,7 +111,14 @@ def masker(mel, n_mels):
         
     return mel
 
-def flatten(mels, mfccs):
+def means_and_stds(mels, mfccs):
+
+    """
+    Function calculates mean and standard deviation for every mel-band and mfc coefficent i.e. row-wise mean and std.
+
+    returns array of concatenated mean and std arrays.
+    
+    """
 
     samples = []
     for mel, mfcc in zip(mels, mfccs):
@@ -101,7 +134,12 @@ def flatten(mels, mfccs):
 
     return samples
 
-def reshape(mels, mfccs, full_mels):
+def mean_and_reshape(mels, mfccs, full_mels):
+
+    """
+    function claculates mean and std of mel spectrograms and reshapes mfcc spectrogram to keras format.
+
+    """
     
     l1 = []
     l2 = []
@@ -119,35 +157,52 @@ def reshape(mels, mfccs, full_mels):
 
 def get_processed(paths, for_sklearn=True, n_augmentations=0, n_mels=64, full_mels=False, n_mfccs=20, fmax=8000, n_workers=6):
 
-    sklearn_data = []
-    keras_data = []
+    """
+    Function implements parallel feature extraction.
+    
+    """
 
-    target_class_list= []
+    data = []
+    target= []
 
+    # Create arguments list for starmap
     args = [(x, for_sklearn, n_augmentations, n_mels, full_mels, n_mfccs, fmax) for x in paths]
 
     with Pool(processes=n_workers) as pool:
-        processed_samples = pool.starmap(process, args)        
+        res = pool.starmap(extract, args)
+
         if for_sklearn:
-            for s, t in processed_samples:
-                sklearn_data.extend(s)
-                target_class_list.extend(t)
-            pool.close()         
+            for s, t in res:
+                data.extend(s)
+                target.extend(t)
+            return np.asarray(data), np.asarray(target)-1        
 
         else:
             mfccs = []
             mels = []    
             meta = []
-            for mfcc, mel, m, t in processed_samples:
+            for mfcc, mel, m, t in res:
                 mfccs.extend(mfcc)
                 mels.extend(mel)
                 meta.extend(m)
-                target_class_list.extend(t)
-            keras_data.append(np.asarray(mfccs))
-            keras_data.append(np.asarray(mels))
-            keras_data.append(np.asarray(meta))
-            pool.close()
+                target.extend(t)
+            data.append(np.asarray(mfccs))
+            data.append(np.asarray(mels))
+            data.append(np.asarray(meta))
 
-    if for_sklearn:
-        return np.asarray(sklearn_data), np.asarray(target_class_list)-1
-    return keras_data, np.asarray(target_class_list)-1
+            return data, np.asarray(target)-1
+
+
+if __name__ == '__main__':
+    
+    # For debugging
+
+    path_list = glob.glob('speech-emotion-recognition-ravdess-data/Actor_*/*')
+
+    X_train_paths, X_test_paths = train_test_split(path_list, test_size=0.10, random_state=42)
+
+    X_train, y_train = get_processed(X_train_paths)
+
+
+        
+    

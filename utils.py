@@ -153,7 +153,7 @@ def scaler(train_set, test_set=[]):
 
     """
     Standardizes an array of shape (n_samples, n_columns) using StandardScaler.
-    If test_set is provided it is transformed using StandardScaler that was fitten on the train set.
+    If test_set is provided it is transformed using StandardScaler that was fitted on the train set.
 
     train_set:  Array
     test_set:   Array or list of arrays
@@ -194,10 +194,10 @@ def time_taken(s, as_start_time):
 def sklearn_cv(clf_list, train_paths, n_folds, n_augmentations):
 
     """
-    Cross-valdiation implementation for sklearn.
-    Augments the trainig fold only and predicts and scores using valdiation fold.
+    Cross-valdiation implementation for sklearn estimators.
+    If augmentation is used then only the training fold is augmented. Prediction and scoring is done using valdiation fold.
 
-    clf_list:           list of Skelearn objects that implement estimator api i.e classifiers, pipelines, searches
+    clf_list:           list of Sklearn objects that implement estimator api i.e classifiers, pipelines, searches etc.
     train_paths:        paths to raw data
     n_folds: int,       number of (stratified)folds
     n_augmentations:    int, number of augmentations in the training fold
@@ -254,7 +254,7 @@ def get_folds(train_paths, n_augmentations, n_folds, for_sklearn=True):
 def process(fold, train_set, val_set, clf):
 
     """
-    Fitting and scoring function for multiprocessing
+    Fitting and scoring function for multiprocessing.
 
     """
     
@@ -268,12 +268,11 @@ def process(fold, train_set, val_set, clf):
 def get_cv_scores(args):
 
     """
-    Multiprocessing implementation for fitting and scoring CV folds created by get_folds
+    Multiprocessing implementation for fitting and scoring CV folds created by get_folds.
 
-    Returns an array of fold scores
+    Returns an array of fold scores.
 
-    """
-        
+    """       
     scores = []
                                               
     n_workers = 1
@@ -298,11 +297,11 @@ def keras_cv(build_model, hp, train_paths, n_augmentations, n_folds, epochs, n_m
     Cross-validation for keras models.
 
     build_model:        keras model.
-    hp:                 Possible hyperparameters to build model or None
+    hp:                 Possible hyperparameters object to build model or None.
     train_paths:        Paths to raw data.
     n_augmentations:    Number of augmentations in traning fold.
     epochs:             Number of epochs to train the model.
-    n_msgs:             Number of traning progress messages while traning.
+    n_msgs:             Number of traning progress messages.
 
     """
     
@@ -323,7 +322,7 @@ def keras_cv(build_model, hp, train_paths, n_augmentations, n_folds, epochs, n_m
         X_train, y_train = fold[1][0], fold[1][1]
         X_val, y_val = fold[2][0], fold[2][1]      
         
-        X_train[1], (X_val[1]) = scaler(X_train[1], X_val[1])
+        X_train[1], X_val[1] = scaler(X_train[1], X_val[1])
         
         y_train = keras.utils.to_categorical(y_train, 8)
         y_val_cat = keras.utils.to_categorical(y_val, 8)
