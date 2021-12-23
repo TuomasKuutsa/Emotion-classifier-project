@@ -191,7 +191,7 @@ def time_taken(s, as_start_time):
 
 # =================================================================================
 
-def sklearn_cv(clf_list, train_paths, n_folds, n_augmentations):
+def sklearn_cv(clf_list, train_paths, n_folds, n_augmentations, n_parallel):
 
     """
     Cross-valdiation implementation for sklearn estimators.
@@ -210,13 +210,13 @@ def sklearn_cv(clf_list, train_paths, n_folds, n_augmentations):
     
     for clf in clf_list:
         
-        print(f'Classifier: {clf.__class__.__name__}\n')
+        print(f'Classifier: {clf[-1].__class__.__name__}\n')
         
-        folds = get_folds(train_paths, n_augmentations=n_augmentations, n_folds=n_folds)
+        folds = get_folds(train_paths, n_augmentations, n_folds)
         
         args = [(fold[0], fold[1], fold[2], clf) for fold in folds]
         
-        scores = get_cv_scores(args)
+        scores = get_cv_scores(args, n_parallel)
         
         print()
         
@@ -265,7 +265,7 @@ def process(fold, train_set, val_set, clf):
     
     return f1_score(val_set[1], clf.predict(val_set[0]), average='macro')
 
-def get_cv_scores(args):
+def get_cv_scores(args, n_parallel):
 
     """
     Multiprocessing implementation for fitting and scoring CV folds created by get_folds.
@@ -274,14 +274,8 @@ def get_cv_scores(args):
 
     """       
     scores = []
-                                              
-    n_workers = 1
-    if len(args) > 8:
-        n_workers = 8
-    else:
-        n_workers=len(args)
 
-    with Pool(processes=n_workers) as pool:
+    with Pool(processes=n_parallel) as pool:
         processed = pool.starmap(process, args)
         for score in processed:
             scores.append(score)   
