@@ -27,7 +27,7 @@ def extract(path, for_sklearn, n_augmentations, n_mels, full_mels, n_mfccs, fmax
     
     print(f'processing with id: {getpid()} file: {path}')
     
-    audio, sr = lr.load(path, sr=None, mono=True, offset=0.7, duration=2.2)
+    audio, sr = lr.load(path, sr=16000, mono=True, offset=0.7, duration=2.2)
         
     mels = []
     

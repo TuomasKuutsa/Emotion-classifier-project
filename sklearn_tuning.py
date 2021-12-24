@@ -154,7 +154,7 @@ for pipe, grid, path in zip(pipes, grids, paths):
     try:
            
         t2 = time()
-        search, results = incremental_search.search(X=X_train, y=y_train, estimator=pipe, grid=grid, search_steps=steps, splits=splits, scoring='f1_macro', n_jobs=-1, verbose=10)
+        search, results = incremental_search.search(X=X_train, y=y_train, estimator=pipe, grid=grid, resources=steps, splits=splits, scoring='f1_macro', n_jobs=-1, verbose=10)
 
         joblib.dump(search, path[0]), joblib.dump(results, path[1])
 
