@@ -24,7 +24,4 @@ Out-of-sample F1-scores:
   
 ![ConfusionMatrices](images/ConfusionMatrices.png)
 
-
-### Cross-validation result comparison of all classifiers
-
 ![CV results](images/CVResults.png)
