@@ -24,4 +24,14 @@ Out-of-sample F1-scores:
   
 ![ConfusionMatrices](images/ConfusionMatrices.png)
 
+Cross-validation F1-scores:
+* Keras:
+  * Multi-input Conv2D:   __0.806__
+* Scikit-learn:
+  * MLPClassifier:        0.753
+  * SVC:                  0.749
+  * XGBClassifier:        0.682
+  * Random Forest:        0.647
+  * LogisticRegression:   0.627
+
 ![CV results](images/CVResults.png)
