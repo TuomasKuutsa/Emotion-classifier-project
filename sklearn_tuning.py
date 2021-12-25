@@ -113,9 +113,9 @@ params_rfc =    {
 params_mlp =    {   
                     'scaler': [StandardScaler(), MinMaxScaler()],
 
-                    'clf__max_iter': [500, 600, 700, 800, 900, 1000],
+                    'clf__max_iter': [300, 400, 500, 600, 700, 800, 900],
                     'clf__activation': ['relu', 'tanh'],
-                    'clf__batch_size': [200, 100, 50],
+                    'clf__batch_size': [32, 64, 128, 256],
                     'clf__learning_rate_init': [0.002, 0.001, 0.0005, 0.0001],
                     'clf__learning_rate': ['constant'],
                     'clf__hidden_layer_sizes': [(512,), (256,), (128,), (64,), (512, 128), (512, 64),
@@ -137,7 +137,7 @@ params_xgb =    {
                 }
 
 
-steps = [(len(y_train), 2000), (len(y_train), 5000)]
+steps = [(len(y_train), 2000)]
 
 paths = [('searches/'+m+'Search', 'searches/'+m+'Results') for m in ['MLPClassifier']]
 
