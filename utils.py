@@ -134,7 +134,7 @@ def img_scaler(train_set, test_set=None):
     
     """
     Standardizes an array of shape (n_samples, n_rows, n_columns, channels) using StandardScaler.
-    If test_set is provided it is transformed using StandardScaler that was fitten on the train set.
+    If test_set is provided it is transformed using StandardScaler that was fitted on the train set.
 
     train_set:  Array
     test_set:   Array or list of arrays
@@ -194,8 +194,8 @@ def time_taken(s, as_start_time):
 def sklearn_cv(clf_list, train_paths, n_folds, n_augmentations, n_parallel):
 
     """
-    Cross-valdiation implementation for sklearn estimators.
-    If augmentation is used then only the training fold only and predicts and scores using valdiation fold.
+    Cross-validation implementation for sklearn estimators.
+    If augmentation is used it is performed to the training fold only.
 
     clf_list:           list of Sklearn objects that implement estimator api i.e classifiers, pipelines, searches etc.
     train_paths:        paths to raw data
@@ -293,9 +293,9 @@ def keras_cv(build_model, hp, train_paths, n_augmentations, n_folds, epochs, n_m
     build_model:        keras model.
     hp:                 Possible hyperparameters object to build model or None.
     train_paths:        Paths to raw data.
-    n_augmentations:    Number of augmentations in traning fold.
+    n_augmentations:    Number of augmentations in training fold.
     epochs:             Number of epochs to train the model.
-    n_msgs:             Number of traning progress messages.
+    n_msgs:             Number of training progress messages.
 
     """
     
