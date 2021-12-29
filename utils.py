@@ -191,7 +191,7 @@ def time_taken(s, as_start_time):
 
 # =================================================================================
 
-def sklearn_cv(clf_list, train_paths, n_folds, n_augmentations, n_parallel):
+def sklearn_cv(clf_list, names, train_paths, n_folds, n_augmentations, n_parallel):
 
     """
     Cross-validation implementation for sklearn estimators.
@@ -205,22 +205,20 @@ def sklearn_cv(clf_list, train_paths, n_folds, n_augmentations, n_parallel):
     returns a score dictionary
 
     """
+
+    folds = get_folds(train_paths, n_augmentations, n_folds)
                 
     classifier_scores = {}
     
-    for clf in clf_list:
+    for clf, name in zip(clf_list, names):
         
-        print(f'Classifier: {clf[-1].__class__.__name__}\n')
-        
-        folds = get_folds(train_paths, n_augmentations, n_folds)
+        print(f'Classifier: {name}\n')
         
         args = [(fold[0], fold[1], fold[2], clf) for fold in folds]
         
         scores = get_cv_scores(args, n_parallel)
         
-        print()
-        
-        classifier_scores[(clf.__class__.__name__, n_augmentations)] = scores
+        classifier_scores[(name, n_augmentations)] = scores
 
     return classifier_scores
 
@@ -285,7 +283,7 @@ def get_cv_scores(args, n_parallel):
 # ============================================================================================
 
 
-def keras_cv(build_model, hp, train_paths, n_augmentations, n_folds, epochs, n_msgs):
+def keras_cv(build_model, hp, folds, epochs, n_updates):
 
     """
     Cross-validation for keras models.
@@ -295,7 +293,7 @@ def keras_cv(build_model, hp, train_paths, n_augmentations, n_folds, epochs, n_m
     train_paths:        Paths to raw data.
     n_augmentations:    Number of augmentations in training fold.
     epochs:             Number of epochs to train the model.
-    n_msgs:             Number of training progress messages.
+    n_updates:             Number of training progress messages.
 
     """
     
@@ -304,8 +302,6 @@ def keras_cv(build_model, hp, train_paths, n_augmentations, n_folds, epochs, n_m
             return lr*0.5
         else:
             return lr
-    
-    folds = get_folds(train_paths, n_augmentations, n_folds, for_sklearn=False)
     
     f1s = []
     losses = []
@@ -329,7 +325,7 @@ def keras_cv(build_model, hp, train_paths, n_augmentations, n_folds, epochs, n_m
         print(f'\nFitting fold {n_fold}')
               
         t = time()
-        progress = KerasModelProgress(epochs, n_msgs, t)
+        progress = KerasModelProgress(epochs, n_updates, t)
         model.fit([X_train[0], X_train[1], X_train[2]], y_train, batch_size=8, epochs=epochs, verbose=0,
                    callbacks=[keras.callbacks.LearningRateScheduler(schedule=scheduler),
                               progress])
