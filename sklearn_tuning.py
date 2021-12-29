@@ -137,7 +137,7 @@ params_xgb =    {
                 }
 
 
-steps = [(len(y_train), 2000)]
+steps = [(len(y_train), 1500)]
 
 paths = [('searches/'+m+'Search', 'searches/'+m+'Results') for m in ['MLPClassifier']]
 
