@@ -26,7 +26,7 @@ Out-of-sample F1-scores:
 
 Cross-validation F1-scores:
 * Keras:
-  * Multi-input CNN:   __0.806__
+  * Multi-input CNN:   __0.807__
 * Scikit-learn:
   * MLPClassifier:        0.753
   * SVC:                  0.749
