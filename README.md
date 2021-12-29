@@ -14,7 +14,7 @@ This reduced dataset consists of two lexically-matched statements in a neutral N
 
 Out-of-sample F1-scores:
 * Keras:
-  * Multi-input Conv2D:   __0.829__
+  * Multi-input CNN:   __0.829__
 * Scikit-learn:
   * MLPClassifier:        0.755
   * SVC:                  0.752
@@ -26,7 +26,7 @@ Out-of-sample F1-scores:
 
 Cross-validation F1-scores:
 * Keras:
-  * Multi-input Conv2D:   __0.806__
+  * Multi-input CNN:   __0.806__
 * Scikit-learn:
   * MLPClassifier:        0.753
   * SVC:                  0.749
