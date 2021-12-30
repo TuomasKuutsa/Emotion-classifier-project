@@ -16,7 +16,7 @@ Out-of-sample F1-scores:
 * Keras:
   * Multi-input CNN:   __0.829__
 * Scikit-learn:
-  * MLPClassifier:        0.755
+  * MLPClassifier:        0.76
   * SVC:                  0.752
   * XGBClassifier:        0.691
   * Random Forest:        0.636
@@ -28,8 +28,8 @@ Cross-validation F1-scores:
 * Keras:
   * Multi-input CNN:   __0.807__
 * Scikit-learn:
-  * MLPClassifier:        0.753
   * SVC:                  0.749
+  * MLPClassifier:        0.742
   * XGBClassifier:        0.682
   * Random Forest:        0.647
   * LogisticRegression:   0.627
