@@ -131,8 +131,8 @@ def search(X, y, estimator, grid, resources, splits, scoring, n_jobs, verbose):
                 
     get_params(searches[-1].cv_results_, 3, False)
     
-    # save searches and and results to file.
-    joblib.dump(searches, 'searches/searches'), joblib.dump(pd.concat(results_list), 'searches/results')
+    # save searches and results to file.
+    joblib.dump(searches, 'searches/tempsearches'), joblib.dump(pd.concat(results_list), 'searches/tempresults')
 
     return searches, pd.concat(results_list)
 
