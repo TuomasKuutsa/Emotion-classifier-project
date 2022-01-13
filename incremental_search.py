@@ -156,7 +156,7 @@ def get_params(results, k, wrap_values):
 def get_reference(results_frame):
 
     """
-    Function computes the last iterations hyperparammeters rank relative to previous iterations.
+    Function computes the last iterations hyperparameters rank relative to previous iterations.
     e.g.    [[last_iter, last_iter-1, ... , first_iter]
              [    1          8                  13    ]
              [    2          4                  30    ]
