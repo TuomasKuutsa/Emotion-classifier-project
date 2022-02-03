@@ -1,4 +1,4 @@
-# Emotion classifier project
+# Emotion recognition project
 
 Purpose of this project is to create a machine learning model for emotion recognition from audio data.
 The dataset used is the The Ryerson audio-visual database of emotional speech and song (RAVDESS).
